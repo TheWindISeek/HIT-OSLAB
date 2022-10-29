@@ -134,6 +134,7 @@ Print_Cursor:
 ! set bp = 0x0000 
     mov ax, #0
     mov bp, ax
+    mov dx, (bp)
     call print_hex
     call print_ln
 ! end print Cursor
@@ -150,6 +151,7 @@ Print_Memory:
 
     mov ax, #2
     mov bp, ax
+    mov dx, (bp)
     call print_hex
     !show KB
     mov ah, #0x03
@@ -176,14 +178,53 @@ Print_Cyl_hd0:
 
     mov ax, #0x0080
     mov bp, ax
+
+    mov dx, (bp)
     call print_hex
     call print_ln
-    jmp end_print
+   
+Print_Head_hd0:
+    mov ah, #0x03
+    xor bh, bh
+    int 0x10
 
+    mov cx, #9
+    mov bx, #0x0007
+    mov bp, #Head_hd0
+    mov ax, #0x1301
+    int 0x10
+    
+    !show Head_hd0
+    mov ax, #0x0082
+    mov bp, ax
+    mov dx, (bp)
+    and dx, #0x00ff
+
+    call print_hex
+    call print_ln
+Print_Sector_hd0:
+    mov ah, #0x03
+    xor bh, bh
+    int 0x10
+
+    mov cx, #11
+    mov bx, #0x0007
+    mov bp, #Sector_hd0
+    mov ax, #0x1301
+    int 0x10
+
+    mov ax, #0x008e
+    mov bp, ax
+    mov dx, (bp)
+    and dx, #0x00ff
+
+    call print_hex
+    call print_ln
+
+    jmp end_print
 ! function 
 print_hex:
     mov cx, #4
-    mov dx, (bp)
     print_digital:
     rol dx, #4
     mov ax, #0x0e0f
@@ -192,6 +233,7 @@ print_hex:
     cmp al, #0x3a
     jl out_p
     add al, #0x07 
+    
     out_p:
     int 0x10
     loop print_digital
@@ -336,7 +378,9 @@ Memory:
 Cyl_hd0:
     .ascii "Cyls_hd0:"
 Head_hd0:
-    .ascii "Head_hd0"
+    .ascii "Head_hd0:"
+Sector_hd0:
+    .ascii "Sector_hd0:"
 KB:
     .ascii "KB"
 .text
