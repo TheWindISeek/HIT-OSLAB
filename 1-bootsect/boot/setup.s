@@ -115,10 +115,12 @@ is_disk1:
 
 ! start print hardware
     mov ax, #INITSEG
+	! in case ss:sp will alter code
     mov ss, ax
     mov sp, #0xff00
     !ss:sp =  9ff00 
-    mov ax, #SETUPSEG
+	! es:bp 
+    mov ax, #SETUPSEG 
     mov es, ax
 
 Print_Cursor:
