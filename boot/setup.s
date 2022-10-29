@@ -113,6 +113,99 @@ no_disk1:
 	stosb
 is_disk1:
 
+! start print hardware
+    mov ax, #INITSEG
+    mov ss, ax
+    mov sp, #0xff00
+    !ss:sp =  9ff00 
+    mov ax, #SETUPSEG
+    mov es, ax
+
+Print_Cursor:
+    mov ah, #0x03
+    xor bh, bh
+    int 0x10
+! addition
+    mov cx, #11
+    mov bx, #0x0007
+    mov bp, #Cursor
+    mov ax, #0x1301
+    int 0x10
+! set bp = 0x0000 
+    mov ax, #0
+    mov bp, ax
+    call print_hex
+    call print_ln
+! end print Cursor
+Print_Memory:
+    mov ah, #0x03
+    xor bh, bh
+    int 0x10
+
+    mov cx, #12
+    mov bx, #0x0007
+    mov bp, #Memory
+    mov ax, #0x1301
+    int 0x10
+
+    mov ax, #2
+    mov bp, ax
+    call print_hex
+    !show KB
+    mov ah, #0x03
+    xor bh, bh
+    int 0x10
+
+    mov cx, #2
+    mov bx, #0x0007
+    mov bp, #KB
+    mov ax, #0x1301
+    int 0x10
+    call print_ln
+
+Print_Cyl_hd0:
+    mov ah, #0x03
+    xor bh, bh
+    int 0x10
+
+    mov cx, #9
+    mov bx, #0x0007
+    mov bp, #Cyl_hd0
+    mov ax, #0x1301
+    int 0x10
+
+    mov ax, #0x0080
+    mov bp, ax
+    call print_hex
+    call print_ln
+    jmp end_print
+
+! function 
+print_hex:
+    mov cx, #4
+    mov dx, (bp)
+    print_digital:
+    rol dx, #4
+    mov ax, #0x0e0f
+    and al, dl
+    add al, #0x30
+    cmp al, #0x3a
+    jl out_p
+    add al, #0x07 
+    out_p:
+    int 0x10
+    loop print_digital
+    ret 
+
+print_ln:
+    mov ax, #0x0e0d
+    int 0x10
+    mov al, #0xA
+    int 0x10 
+    ret 
+
+end_print:
+! end print hardware data
 ! now we want to move to protected mode ...
 
 	cli			! no interrupts allowed !
@@ -234,6 +327,18 @@ msg:
     .byte 13, 10
     .ascii "setup..."
     .byte 13, 10, 13, 10
+Cursor:
+    .ascii "Cursor Pos:"
+
+Memory:
+    .ascii "Memory Size:"
+
+Cyl_hd0:
+    .ascii "Cyls_hd0:"
+Head_hd0:
+    .ascii "Head_hd0"
+KB:
+    .ascii "KB"
 .text
 endtext:
 .data
