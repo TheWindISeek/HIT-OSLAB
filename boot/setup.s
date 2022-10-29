@@ -29,7 +29,18 @@ begbss:
 
 entry start
 start:
+    mov ax, #SETUPSEG
+    mov es, ax
+    
+    mov ah, #0x03
+    xor bh, bh
+    int 0x10
 
+    mov cx, #12
+    mov bx, #0x0007
+    mov bp, #msg
+    mov ax, #0x1301
+    int 0x10
 ! ok, the read went well so we get current cursor position and save it for
 ! posterity.
 
@@ -72,7 +83,6 @@ start:
 	mov	cx,#0x10
 	rep
 	movsb
-
 ! Get hd1 data
 
 	mov	ax,#0x0000
@@ -220,7 +230,10 @@ idt_48:
 gdt_48:
 	.word	0x800		! gdt limit=2048, 256 GDT entries
 	.word	512+gdt,0x9	! gdt base = 0X9xxxx
-	
+msg:
+    .byte 13, 10
+    .ascii "setup..."
+    .byte 13, 10, 13, 10
 .text
 endtext:
 .data

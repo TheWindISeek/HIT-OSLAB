@@ -71,7 +71,7 @@ load_setup:
 	mov	ax,#0x0200+SETUPLEN	! service 2, nr of sectors
 	int	0x13			! read it
 	jnc	ok_load_setup		! ok - continue
-	mov	dx,#0x0000
+	mov	dx,#0x0000      ! if failed try read again j load_setup 
 	mov	ax,#0x0000		! reset the diskette
 	int	0x13
 	j	load_setup
@@ -100,7 +100,16 @@ ok_load_setup:
 	mov	bp,#msg1
 	mov	ax,#0x1301		! write string, move cursor
 	int	0x10
+   ! another msg 
+    mov ah, #0x03
+    xor bh, bh
+    int 0x10 
 
+    mov cx, #26
+    mov bx, #0x0001
+    mov bp, #msg 
+    mov ax, #0x1301
+    int 0x10 
 ! ok, we've written the message, now
 ! we want to load the system (at 0x10000)
 
@@ -246,6 +255,10 @@ msg1:
 	.ascii "Lucifer system Created by rebelOverWaist"
 	.byte 13,10,13,10
 
+msg:
+    .byte 13, 10
+    .ascii "This is another msg."
+    .byte 13, 10, 13, 10
 .org 508
 root_dev:
 	.word ROOT_DEV
