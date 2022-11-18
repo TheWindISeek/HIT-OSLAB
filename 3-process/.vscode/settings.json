@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "*.s": "asm-intel-x86-generic",
+        "stat.h": "c",
+        "mm.h": "c",
+        "head.h": "c"
+    }
+}
