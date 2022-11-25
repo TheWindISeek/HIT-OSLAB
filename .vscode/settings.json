@@ -1,0 +1,11 @@
+{
+    "files.associations": {
+        "*.s": "asm-intel-x86-generic",
+        "sched.h": "c",
+        "system.h": "c",
+        "kernel.h": "c",
+        "mm.h": "c",
+        "string.h": "c",
+        "segment.h": "c"
+    }
+}
