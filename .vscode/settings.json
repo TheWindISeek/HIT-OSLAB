@@ -6,6 +6,7 @@
         "kernel.h": "c",
         "mm.h": "c",
         "string.h": "c",
-        "segment.h": "c"
+        "segment.h": "c",
+        "signal.h": "c"
     }
 }
